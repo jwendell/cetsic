@@ -2,14 +2,23 @@
 
 Run the [Cloud Enablement Test Suite](https://github.com/jboss-openshift/ce-testsuite) directly from a container.
 
+### The problem
+You need to run the ce-testsuite tests against an OpenShift server. But:
+- You don't want to worry about its dependencies
+- You don't want to mess your local maven repository
+- You want to verify the tests are passing (or failing; or executing) regardless of your environment
+
+### The solution
+*cetsic* is an tool - in a form of an container - that configures this environment for you and run the tests against an OpenShift server. It gives you a fresh, totally clean environment for you to run the ce-testsuite.
+
 ### Benefits
 - Avoids "Works on my machine" answers
 - Allows simultaneous tests to run, because they are isolated into containers
   - Can run different set of tests and/or
   - Against different Openshift clusters
 - Ideal for testing patches/pull requests
-  - You can tell *cetsic* to run **your** version of a test, by pointing it to your fork (See below under **Variables** section)
-  - Allows integration with GitHub for doing automated tests against PR's
+  - You can instruct *cetsic* to run **your** version of a test, by pointing it to your fork (See below under **Variables** section)
+  - Allows integration with GitHub for doing automated tests against PR's [future work]
 
 ### Usage
 ```
@@ -38,3 +47,10 @@ This will setup a container with all dependencies for the testsuite and will run
 
 Suggestion: If you are using many variables, put them in a file, in the form `VARIABLE=value`, one per line, and pass this file to `docker run --env-file=<your-file>`.
 
+### Customization
+
+You can customize which tests you will run by tweaking the variable `MAVEN_ARGS`. Examples:
+- To run a single test: `MAVEN_ARGS=-Dtest=Eap70BasicTest -DfailIfNoTests=false`
+- To run all EAP 7 tests: `MAVEN_ARGS=-pl eap/eap70`
+
+There's much more. Check out the [Surefire documentation](http://maven.apache.org/surefire/maven-surefire-plugin/examples/single-test.html) to see what you can put into that variable in order to customize the tests execution.
