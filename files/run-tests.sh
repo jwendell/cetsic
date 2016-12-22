@@ -118,9 +118,12 @@ run_tests() {
     # Unset some variables that might conflict with java openshift client
     unset OPENSHIFT_URL MASTER_URL
 
+    local args=""
+    [ -n "$OPENSHIFT_ROUTER_HOST" ] && args="-Drouter.hostIP=$OPENSHIFT_ROUTER_HOST"
+
     echo "Running tests..."
     (cd ce-testsuite && \
-     mvn -nsu clean test $MAVEN_ARGS
+     mvn -nsu clean test $args $MAVEN_ARGS
     ) || exit 1
 
     echo
